@@ -100,7 +100,7 @@ $(function() {
 		wrap.animate({opacity: '1'}, 2000);
 		hello.animate({opacity: '1'}, 2000, function() {
 			setTimeout(function() {
-				window.open('quziPart/quziDemo.html', '_self');
+				window.open('quziPart/index.html', '_self');
 			}, 2000);
 		});
 
