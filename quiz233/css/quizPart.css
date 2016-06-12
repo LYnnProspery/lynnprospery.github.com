@@ -1,0 +1,78 @@
+/*
+quizPart css sheet for quiz2333
+*
+by lynnprosper
+*/
+
+
+html {
+	height: 100%;
+}
+body {
+	height: 100%;
+	background:-webkit-linear-gradient(rgb(135,132,131), rgb(35,32,31)));
+	background:-o-linear-gradient(rgb(135,132,131), rgb(35,32,31));
+	background:linear-gradient(rgb(135,132,131), rgb(35,32,31));
+	font-family: arial;
+}
+.container {
+	background: #fff;
+	width: 800px;
+	border-radius: 0 0 10px 10px;
+	box-shadow: 5px 5px 15px #000;
+}
+.container h2 {
+	color: rgb(12,53,86);
+}
+.progress {
+	width: 300px;
+}
+.question h3 {
+	margin-top: -10px;
+	display: inline-block;
+	vertical-align: bottom;
+}
+.choose-answer {
+	background: rgb(45,43,40);
+	border-radius: 5px;
+	margin-bottom: 30px;
+}
+input[type="radio"] {
+	margin-left: 10px;
+}
+input[type="radio"]:checked ~ p{
+	color: white
+}
+label {
+	background: rgb(35,32,31);
+	margin: 10px;
+	width: 97%;
+	border-radius: 20px;
+	box-shadow: 5px 5px -5px #fff;
+	cursor: pointer;
+}
+label:hover {
+	background: rgb(0,0,0);
+}
+label p {
+	margin-top: 10px;
+	margin-left: 10px;
+	color: rgb(135,137,138);
+	display: inline-block;
+}
+
+.buttons .btn {
+	width: 70px;
+	height: 35px;
+	margin: 10px;
+	transition: all .4s ease;
+	-webkit-transition: all .4s ease;
+	-moz-transition: all .4s ease;
+	-o-transition: all .4s ease;
+}
+.buttons .btn:hover {
+	border-radius: 20px;
+}
+#checkAnswerBtn {
+	width: 150px;
+}

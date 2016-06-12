@@ -1,0 +1,47 @@
+body {
+	font-family: consolas;
+}
+* {
+	padding:0;
+	margin: 0;
+}
+#enter-wrap {
+	width: 100%;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	background: #000;
+	opacity: 0;
+	z-index: 999;
+}
+
+#hello {
+	position: absolute;
+	zoom: 2;
+	opacity: 0;
+	color:#fff;
+	width: 100%;
+	top: 200px;
+	text-align: center;
+	z-index: 1000;
+}
+
+#main {
+	opacity: 0;
+	position: relative;
+}
+#main h1 {
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	top: 120px;
+	color: #fff;
+	zoom:2;
+}
+#index-bg {
+	z-index: -1;
+}
+strong {
+	color: green;
+}
+

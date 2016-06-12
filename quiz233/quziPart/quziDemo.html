@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Quiz233</title>
+	<link rel="stylesheet" type="text/css" href="../frames/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="../css/quizPart.css">
+	<link rel="stylesheet" type="text/css" href="../css/navigation.css">
+</head>
+<body>
+	<div class="container">
+		<h2><strong>Quiz 233</strong></h2>
+		<h4>The scope you selected is photograph, enjoy yourself</h4>
+		<hr class="divider"></hr>
+		<div class="acomplish-info">
+			<div class="progress pull-right">
+		    	<div class="progress-bar progress-bar-success progress-bar-striped active" style="color:#000">4/10</div>
+			</div>
+			<p class="pull-right acomplished">acomplished 4&nbsp;&nbsp;</p>
+			<p>Question <strong class="num">加载中</strong></p>
+		</div>
+		<hr class="divider"></hr>
+		<div class="question-info">
+			<div class="question">
+				加载中...
+			</div>
+			<div class="choose-answer" id="answers">
+				<label for="A">
+					<input type="radio" id="A" name="answer" value="A" class="chooices"/>
+					<p></p>
+				</label>
+				<label for="B">
+					<input type="radio" id="B" name="answer" value="B" class="chooices"/>
+					<p></p>
+				</label>
+				<label for="C">
+					<input type="radio" id="C" name="answer" value="C" class="chooices"/>
+					<p></p>
+				</label>
+				<label for="D">
+					<input type="radio" id="D" name="answer" value="D" class="chooices"/>
+					<p></p>
+				</label>
+			</div>
+		</div>
+		<div class="buttons">
+			<button class="btn btn-info pull-right question-ctrl" id="next">Next</button>
+			<button class="btn btn-primary pull-right question-ctrl" id="pre">Pre</button>
+			<button class="btn btn-success" id="submit">Submit</button>
+		</div>
+	</div>
+	<!-- modal for result -->
+	<div class='modal fade' id='myModal'>
+		<div class='modal-dialog modal-lg'>
+			<div class='modal-content'>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+					<h2 class="modal-title">Result</h2>
+				</div>
+				<div class="modal-body">
+					<p style="font-size:20px;" ></p>
+					<p><strong>错题详情 :</strong></p>
+					<div class="modal-result-info">
+						<p class="result-content"></p>
+						<div class="result-answer">
+							<p class="answerA"></p>
+							<p class="answerB"></p>
+							<p class="answerC"></p>
+							<p class="answerD"></p>
+						</div>
+						<p class="correct-answer"></p>
+						解析 :
+						<p class="reason-of-answer"></p>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="btn-toolbar"></div>
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class='modal fade' id='myModalAbout'>
+		<div class='modal-dialog modal-lg'>
+			<div class='modal-content'>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+					<h2 class="modal-title">About</h2>
+				</div>
+				<div class="modal-body">
+					<br />
+					<br />
+					<br />
+					<br />
+				</div>
+				<div class="modal-footer">
+					<div class="btn-toolbar"></div>
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<nav  class="navigation">
+	    <input type="checkbox" id="post" class="postToggle" />
+	    <label for="post" class="postBtn"></label>
+	    <ul>
+	        <li class="to-index"><a href="#" id="back-to-index">首页</a></li>
+	        <li class="collect"><a href="#" id="collect-quiz">收藏</a></li>
+	        <li class="carry-on"><a href="#" id="go-on">续题</a></li>
+	        <li class="evalute"><a href="#" id="evalution">评价</a></li>
+	        <li class="about"><a href="#" id="about-us">关于</a></li>
+	    </ul>
+	</nav>
+
+<script type="text/javascript" src="../frames/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="../frames/jquery.easing.1.3.min.js"></script>
+<script type="text/javascript" src="../frames/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/quizPart.js"></script>
+</body>
+</html>

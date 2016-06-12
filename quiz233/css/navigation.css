@@ -1,0 +1,164 @@
+/*
+navigation css3 animation for quiz2333
+*
+by lynnprosper
+*/
+
+
+.navigation {
+    position: fixed;
+    left: 0px;
+    top: 30%;
+    z-index: 10;
+    width: 50px;
+}
+.navigation .postBtn {
+    height: 46px;
+    width: 46px;
+    display: block;
+    background: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    z-index: 1;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    -moz-transition: all 0.35s ease-in;
+    -webkit-transition: all 0.35s ease-in;
+    transition: all 0.35s ease-in;
+    box-shadow: 2px 2px 5px #000;
+}
+.navigation .postBtn:after {
+    content: '更多';
+    width: 100%;
+    position: absolute;
+    display: block;
+    text-align: center;
+    line-height: 46px;
+    color:#000;
+    font-weight: 100;
+    -moz-transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+.navigation .postToggle {
+    display: none;
+}
+.navigation ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    position: relative;
+}
+.navigation li {
+    position: absolute;
+    overflow: hidden;
+    /*text-indent: 2px; 首行缩进*/
+    height: 50px;
+    width: 50px;
+    background: #d6d6d6;
+    border-radius: 50%;
+    opacity: 0;
+    border: 1px solid white;
+    box-shadow: 2px 2px 5px #000;
+    -moz-background-clip: padding;
+    -o-background-clip: padding-box;
+    -webkit-background-clip: padding;
+    background-clip: padding-box;
+    -moz-transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -moz-transition: -moz-transform 0.45s cubic-bezier(0.48, 0.13, 0.42, 1.45), opacity 0.3s ease-in;
+    -o-transition: -o-transform 0.45s cubic-bezier(0.48, 0.13, 0.42, 1.45), opacity 0.3s ease-in;
+    -webkit-transition: -webkit-transform 0.45s cubic-bezier(0.48, 0.13, 0.42, 1.45), opacity 0.3s ease-in;
+    transition: transform 0.45s cubic-bezier(0.48, 0.13, 0.42, 1.45), opacity 0.3s ease-in;
+}
+.navigation ul li a {
+    color: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    line-height: 50px;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+.navigation .to-index {
+    background: #363636;
+}
+.navigation .collect {
+    background: #d44f2e;
+}
+.navigation .carry-on {
+    background: #44b57d;
+}
+.navigation .evalute {
+    background: #a26fbc;
+}
+.navigation .about {
+    background: #687480;
+}
+
+.postToggle:checked ~ .postBtn {
+    background: #eeeeee;
+    /*background: rgba(0, 0, 0, 0);*//*实现FF背景透明，文字不透明*/
+    -moz-transform: scale(0.8, 0.8);
+    -webkit-transform: scale(0.8, 0.8);
+    transform: scale(0.8, 0.8);
+}
+.postToggle:checked ~ .postBtn:after {
+    content: '收起';
+    line-height: 46px;
+}
+.postToggle:checked ~ ul li {
+    opacity: 1;
+}
+.postToggle:checked ~ ul .to-index {
+    -moz-transform: translate(0, -175%);
+    -webkit-transform: translate(0, -175%);
+    transform: translate(0, -175%);
+}
+.postToggle:checked ~ ul .to-index:hover {
+    -moz-transform: translate(0, -185%);
+    -webkit-transform: translate(0, -185%);
+    transform: translate(0, -185%);
+}
+.postToggle:checked ~ ul .collect {
+    -moz-transform: translate(125%, -130%);
+    -webkit-transform: translate(125%, -130%);
+    transform: translate(125%, -130%);
+}
+.postToggle:checked ~ ul .collect:hover {
+    -moz-transform: translate(135%, -140%);
+    -webkit-transform: translate(135%, -140%);
+    transform: translate(135%, -140%);
+}
+.postToggle:checked ~ ul .carry-on {
+    -moz-transform: translate(175%, 0%);
+    -webkit-transform: translate(175%, 0%);
+    transform: translate(175%, 0%);
+}
+.postToggle:checked ~ ul .carry-on:hover {
+    -moz-transform: translate(185%, 0);
+    -webkit-transform: translate(185%, 0);
+    transform: translate(185%, 0);
+}
+.postToggle:checked ~ ul .evalute {
+    -moz-transform: translate(125%, 130%);
+    -webkit-transform: translate(125%, 130%);
+    transform: translate(125%, 130%);
+}
+.postToggle:checked ~ ul .evalute:hover {
+    -moz-transform: translate(135%, 140%);
+    -webkit-transform: translate(135%, 140%);
+    transform: translate(135%, 140%);
+}
+.postToggle:checked ~ ul .about {
+    -moz-transform: translate(0px, 175%);
+    -webkit-transform: translate(0px, 175%);
+    transform: translate(0px, 175%);
+}
+.postToggle:checked ~ ul .about:hover {
+    -moz-transform: translate(0, 185%);
+    -webkit-transform: translate(0, 185%);
+    transform: translate(0, 185%);
+}

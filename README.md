@@ -1,2 +1,1 @@
-# lynnprospery.github.com
-This is the personal website
+This is the personal website of LynnProsper.
