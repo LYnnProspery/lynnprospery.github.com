@@ -33,7 +33,7 @@ $(function() {
 
 	$('#visit-jq').on('click', function() {
 		oModal.find('.modal-title').html('My works mainly with <strong>jQuery</strong> : ');
-		oModal.find('.modal-body').append('<a href="quiz233/index.html">Quiz233: This is a website for quizes with many scopes .</a>')
+		oModal.find('.modal-body').append('<a href="quiz233/quizIndex.html">Quiz233: This is a website for quizes with many scopes .</a>')
 		$('#myModal').modal();
 	})
 
