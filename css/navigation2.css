@@ -1,20 +1,14 @@
-/*
-navigation css3 animation for quiz2333
-*
-by lynnprosper
-*/
-
 
 .navigation {
     position: fixed;
-    left: -60px;
-    top: -60px;
+    left: 0px;
+    top: 20%;
     z-index: 10;
-    width: 120px;
+    width: 50px;
 }
 .navigation .postBtn {
-    height: 120px;
-    width: 120px;
+    height: 46px;
+    width: 46px;
     display: block;
     background: rgba(255, 255, 255, 0.5);
     position: absolute;
@@ -28,17 +22,15 @@ by lynnprosper
     box-shadow: 2px 2px 5px #000;
 }
 .navigation .postBtn:after {
-    margin-left: 25px;
-    margin-top: 20px;
-    content: 'skills';
+    content: 'Capacity';
     width: 100%;
     position: absolute;
     display: block;
     text-align: center;
-    line-height: 120px;
-    font-size: 1.1em;
+    line-height: 46px;
     color:#000;
     font-weight: 100;
+    font-size: 0.7em;
     -moz-transform: translate3d(0, 0, 0);
     -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
@@ -69,7 +61,7 @@ by lynnprosper
     background-clip: padding-box;
     -moz-transform: translate3d(0, 0, 0);
     -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(65px, 65px, 0);
+    transform: translate3d(0, 0, 0);
     -moz-transition: -moz-transform 0.45s cubic-bezier(0.48, 0.13, 0.42, 1.45), opacity 0.3s ease-in;
     -o-transition: -o-transform 0.45s cubic-bezier(0.48, 0.13, 0.42, 1.45), opacity 0.3s ease-in;
     -webkit-transition: -webkit-transform 0.45s cubic-bezier(0.48, 0.13, 0.42, 1.45), opacity 0.3s ease-in;
@@ -92,15 +84,15 @@ by lynnprosper
     background: #d44f2e;
 }
 .navigation .angular {
+        font-size: 0.8em;
     background: #44b57d;
-    font-size: .9em;
 }
 .navigation .node {
     background: #a26fbc;
 }
 .navigation .bootstrap {
+    font-size: 0.7em;
     background: #687480;
-    font-size: .7em
 }
 
 .postToggle:checked ~ .postBtn {
@@ -112,58 +104,59 @@ by lynnprosper
 }
 .postToggle:checked ~ .postBtn:after {
     content: 'Fold';
-    line-height: 120px;
+    font-size: 1em;
+    line-height: 46px;
 }
 .postToggle:checked ~ ul li {
-    opacity: 1;
+    opacity: 0.8;
 }
 .postToggle:checked ~ ul .js {
     -moz-transform: translate(0, -175%);
     -webkit-transform: translate(0, -175%);
-    transform: translate(230px, 60px);
+    transform: translate(0, -175%);
 }
 .postToggle:checked ~ ul .js:hover {
     -moz-transform: translate(0, -185%);
     -webkit-transform: translate(0, -185%);
-    transform: translate(235px, 60px);
+    transform: translate(0, -185%);
 }
 .postToggle:checked ~ ul .jq {
     -moz-transform: translate(125%, -130%);
     -webkit-transform: translate(125%, -130%);
-    transform: translate(220.26px, 128.53px);
+    transform: translate(125%, -130%);
 }
 .postToggle:checked ~ ul .jq:hover {
     -moz-transform: translate(135%, -140%);
     -webkit-transform: translate(135%, -140%);
-    transform: translate(224.86px, 130.43px);
+    transform: translate(135%, -140%);
 }
 .postToggle:checked ~ ul .angular {
     -moz-transform: translate(175%, 0%);
     -webkit-transform: translate(175%, 0%);
-    transform: translate(185.5px, 185.5px);
+    transform: translate(175%, 0%);
 }
 .postToggle:checked ~ ul .angular:hover {
     -moz-transform: translate(185%, 0);
     -webkit-transform: translate(185%, 0);
-    transform: translate(189px, 189px);
+    transform: translate(185%, 0);
 }
 .postToggle:checked ~ ul .node {
     -moz-transform: translate(125%, 130%);
     -webkit-transform: translate(125%, 130%);
-    transform: translate(128.53px, 220.26px);
+    transform: translate(125%, 130%);
 }
 .postToggle:checked ~ ul .node:hover {
     -moz-transform: translate(135%, 140%);
     -webkit-transform: translate(135%, 140%);
-    transform: translate(130.43px, 224.86px);
+    transform: translate(135%, 140%);
 }
 .postToggle:checked ~ ul .bootstrap {
     -moz-transform: translate(0px, 175%);
     -webkit-transform: translate(0px, 175%);
-    transform: translate(60px, 235px);
+    transform: translate(0px, 175%);
 }
 .postToggle:checked ~ ul .bootstrap:hover {
     -moz-transform: translate(0, 185%);
     -webkit-transform: translate(0, 185%);
-    transform: translate(60px, 240px);
+    transform: translate(0, 185%);
 }

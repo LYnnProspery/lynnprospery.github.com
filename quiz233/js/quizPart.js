@@ -16,38 +16,68 @@ $(function() {
 	// 		//console.log('add')
 	// 	});
 	// }
-
+	var type = sessionStorage.getItem('scopeType');
+	$('#selectedType').html(type);
 	var quizGeted = [];
-	$.ajax({
-		url: '../quizData/quizTest.json',
-		type: 'GET',
-		dataType: 'json',
-		success: function(data) {
-			quizGeted = data;
-			index = 0;
-			indexMax = quizGeted.length - 1;
-			userDidNumber = 0;
-			quizNumber = indexMax + 1;
-			userAnswer = new Array(quizNumber);
-			for(var i = 0; i < quizNumber; i++) {
-				result.push(quizGeted[i].result);
-			}
-			//alert(result)
-			//console.log(quizGeted[0]);
-			insertQuiz(0);
-			quizView();
-		},
-		error: function(){
-			console.log('error')
+	var index = 0;
+	var indexMax = 0;
+	var userAnswer;
+	var userDidNumber = 0;
+	var $arrRadios;
+	var result = [];
+	var isDisabled = false;
+	(function() {
+		//test
+		var data = sessionStorage.getItem('quizData');
+		quizGeted = JSON.parse(data);
+		
+		// var data = sessionStorage.getItem('quizData');
+		// quizGeted = JSON.parse(data);
+		index = 0;
+		indexMax = quizGeted.length - 1;
+		userDidNumber = 0;
+		quizNumber = indexMax + 1;
+		userAnswer = new Array(quizNumber);
+		for(var i = 0; i < quizNumber; i++) {
+			result.push(quizGeted[i].result);
 		}
-	});
+		//alert(result)
+		//console.log(quizGeted[0]);
+		insertQuiz(0);
+		quizView();
+
+	})();
+	// $.ajax({
+	// 	url: '../quizData/quizTest.json',
+	// 	type: 'GET',
+	// 	dataType: 'json',
+	// 	success: function(data) {
+	// 		quizGeted = data;
+	// 		index = 0;
+	// 		indexMax = quizGeted.length - 1;
+	// 		userDidNumber = 0;
+	// 		quizNumber = indexMax + 1;
+	// 		userAnswer = new Array(quizNumber);
+	// 		for(var i = 0; i < quizNumber; i++) {
+	// 			result.push(quizGeted[i].result);
+	// 		}
+	// 		//alert(result)
+	// 		//console.log(quizGeted[0]);
+	// 		insertQuiz(0);
+	// 		quizView();
+	// 	},
+	// 	error: function(){
+	// 		console.log('error')
+	// 	}
+	//});
 	//console.log(quizGeted);
 	//test for one
 	function insertQuiz(index) {
 		var questionNumber = quizGeted[index];
+		console.log(questionNumber)
 		$('.num').html('NO.' + (index + 1) + ' :');
 		//console.log(questionNumber);
-		var firstChar = questionNumber.question.substr(0, 1);
+		var firstChar = questionNumber.question.substring(0, 1);
 		var quizHtml = '<div class="question">'
 					 + '<p><h3>&nbsp;&nbsp;&nbsp;&nbsp;' + firstChar + '&nbsp;</h3>' + questionNumber.question.substring(1) + '</p></div>'
 					 + '<div class="choose-answer" id="answers">'
@@ -118,16 +148,9 @@ $(function() {
 		// 		}
 		// 	});
 		// });
-		//userAnswer[index] = $('input:checked').val();
-		//console.log($('input[type="radio"]').length);
+		// userAnswer[index] = $('input:checked').val();
+		// console.log($('input[type="radio"]').length);
 	}
-	var index = 0;
-	var indexMax = 0;
-	var userAnswer;
-	var userDidNumber = 0;
-	var $arrRadios;
-	var result = [];
-	var isDisabled = false;
 	function quizView() {
 		$('#pre').attr('disabled', true);
 		$('#next').on('click',function() {
@@ -168,8 +191,10 @@ $(function() {
 				}
 			}
 		});
+		
 		$('#submit').on('click', function() {
 			//recordAnswer();
+			console.log("submit");
 			var flag = true;
 			//console.log(userAnswer)
 			for(var i = 0, len = userAnswer.length; i < len; i++) {
@@ -200,6 +225,7 @@ $(function() {
 			var checkBtn = $('<button class="btn btn-info" id="checkAnswerBtn">查看错题</button>').on('click', function() {
 				callModal();
 			});
+			console.log(checkBtn)
 			$('.buttons').append(checkBtn);
 
 		});
@@ -261,7 +287,9 @@ $(function() {
 
 				oModalResult.find('.correct-answer').html('正确答案: ' + quizGeted[resultIndex].result + ',&nbsp;&nbsp;你的答案: '
 					+ userAnswer[resultIndex] + '&nbsp;&nbsp;');
-			oModalResult.css('display', 'none').fadeIn(1000);
+				oModalResult.css('display', 'none').fadeIn(1000);
+
+				oModalResult.find('.reason-of-answer').html(quizGeted[resultIndex].reason);
 			}
 
 			$(wrongAnswer).each(function(i, item) {
@@ -272,7 +300,7 @@ $(function() {
 			var oModalFooterBtn = $('.modal-footer .btn-toolbar').find('.btn');
 			$(oModalFooterBtn).each(function(index, item) {
 				$(item).on('click', function() {
-					console.log(parseInt($(this).html()) - 1);
+					//console.log(parseInt($(this).html()) - 1);
 					getCorrectAnswer(parseInt($(this).html()) - 1);
 				})
 			})
@@ -287,7 +315,7 @@ $(function() {
 			return false;
 		}
 		setTimeout(function(){
-			window.open('../quizIndex.html', '_self');
+			window.open('../index.html', '_self');
 		}, 1000);
 	});
 
@@ -325,12 +353,22 @@ $(function() {
 
 	$('#go-on').on('click', function() {
 		if(isDisabled) {
-			location.reload();
+			var type = sessionStorage.getItem('scopeType');
 			$.ajax({
-				url: '../quizData/quizTest.json',//新题
+				url: 'question_find',
+
+				//test
+				url: '../quizData/quizTest1.json',
+				
 				type: 'GET',
+				//test
 				dataType: 'json',
+				
+				data: 'scope=' + type, 
 				success: function(data) {
+					console.log(data);
+					//quizGeted = parseJSON(data);
+					
 					quizGeted = data;
 					index = 0;
 					indexMax = quizGeted.length - 1;
@@ -342,9 +380,13 @@ $(function() {
 					}
 					insertQuiz(0);
 					quizView();
+					isDisabled = false;
+					$('input[type="radio"]').prop('disabled', false);
+					$('#submit').prop('disabled', false);
+					$('#checkAnswerBtn').remove();
 				},
-				error: function(){
-					console.log('error')
+				error: function(error, text){
+					console.log(text);
 				}
 			});
 		} else {
@@ -354,10 +396,10 @@ $(function() {
 
 	$('#evalution').on('click', function() {
 		alert('还没写');
-	})
+	});
 
 
 	$('#about-us').on('click', function() {
 		$('#myModalAbout').modal();
-	})
+	});
 });

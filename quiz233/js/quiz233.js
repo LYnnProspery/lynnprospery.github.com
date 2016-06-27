@@ -35,49 +35,120 @@ $(function() {
 	});
 	$(document).on('scroll', function() {
 		var boxHeight = $('#topBox').height();
-		var sloganHeight = $('.slogan1').height();
-		var contentHeight = $('.quizContent1').height();
+		var sloganHeight = $('.slogan1').height() - 100;
+		//v = $('.quizContent1').height();
 		var top = $(window).scrollTop();
-		if(top < (boxHeight + sloganHeight + 10)){
+		if(top < (boxHeight + sloganHeight )){
 			$('#pic2').fadeOut(1000);
 			$('#pic1').fadeIn(1000);
 		} 
-		if(top >= (boxHeight + sloganHeight + 10) && 
-			 top < (boxHeight + 2*sloganHeight + contentHeight+ 10)){
+		if(top >= (boxHeight + sloganHeight ) && 
+			 top < (boxHeight + 2*sloganHeight)){
 			$('#pic1').fadeOut(1000);
 			$('#pic2').fadeIn(1000);
 			$('#pic3').fadeOut(1000);	
 		}
 
-		if(top >= (boxHeight + 2*sloganHeight + contentHeight+ 10) &&
-		   top < (boxHeight + 3*sloganHeight + 2*contentHeight+ 10)) {
+		if(top >= (boxHeight + 2*sloganHeight) &&
+		   top < (boxHeight + 3*sloganHeight)) {
 			$('#pic2').fadeOut(1000);
 			$('#pic3').fadeIn(1000);
 			$('#pic4').fadeOut(1000);
 		} 
 
-		if(top >= (boxHeight + 3*sloganHeight + 2*contentHeight+ 10) &&
-		   top < (boxHeight + 4*sloganHeight + 3*contentHeight+ 10)) {
+		if(top >= (boxHeight + 3*sloganHeight) &&
+		   top < (boxHeight + 4*sloganHeight)) {
 			$('#pic3').fadeOut(1000);
 			$('#pic4').fadeIn(1000);
 			$('#pic5').fadeOut(1000);
 		} 
-		if(top >= (boxHeight + 4*sloganHeight + 3*contentHeight+ 10) &&
-		   top < (boxHeight + 5*sloganHeight + 4*contentHeight+ 10)) {
+		if(top >= (boxHeight + 4*sloganHeight) &&
+		   top < (boxHeight + 5*sloganHeight + 100)) {
 			$('#pic4').fadeOut(1000);
 			$('#pic5').fadeIn(1000);
 			$('#pic6').fadeOut(1000);
 		} 
-		if(top >= (boxHeight + 5*sloganHeight + 4*contentHeight+ 10) &&
-		   top < (boxHeight + 6*sloganHeight + 5*contentHeight+ 10)) {
+		if(top >= (boxHeight + 5*sloganHeight + 100) &&
+		   top < (boxHeight + 6*sloganHeight)) {
 			$('#pic5').fadeOut(1000);
 			$('#pic6').fadeIn(1000);
 		} 
 	});
 
+
+	$('.docker img').on('click', function() {
+		linkToQuizPart($(this));
+	})
+
 	$('#topBox .carousel-inner button').on('click', function() {
+		linkToQuizPart($(this));
+	});
+
+	$('#quizContents button').on('click', function() {
+		linkToQuizPart($(this));
+	});
+	function linkToQuizPart(_this) {
+		// var quizData = navigator.userAgent;
+		// try{
+		//   localStorage.setItem(data,quizData);
+		// }catch(e){
+		//   if(e === QUOTA_EXCEEDED_ERR){
+		//     alert('无法存储数据，数据量超限');
+		//   }
+		// }
+		// $.ajax({
+		// 		url: 'quizData/quizTest2.json',
+		// 		type: 'GET',
+		// 		dataType: 'json',
+		// 		success: function(data) {
+		// 			//console.log(data.length);
+		// 			//var jsonData = ;
+		// 			//console.log(data);
+		// 			try{
+		// 			  localStorage.setItem('quizData',JSON.stringify(data));
+		// 			  console.log('store success')
+		// 			}catch(e){
+		// 			  console.log(e);
+		// 			}
+		// 		},
+		// 		error: function(error) {
+		// 			console.log(error);
+		// 		}
+
+		// 	});
+		//var _this = $(this);
+		sessionStorage.setItem('scopeType', _this.attr('target'));
+		$.ajax({
+			//test
+			url: 'quizData/quizTest2.json',
+			dataType: 'json',
+
+			
+			//url: 'question_find',
+			type: 'GET',
+			data: 'scope=' + _this.attr('target'),
+			success: function(data) {
+				//console.log(data.length);
+				//var jsonData = ;
+				//console.log(data);
+				//alert(data)
+				try{
+					//test
+					sessionStorage.setItem('quizData',JSON.stringify(data));
+					
+					//sessionStorage.setItem('quizData',data);
+				 	console.log('store success')
+				}catch(e){
+				 	console.log(e);
+				}
+			},
+			error: function(error) {
+				console.log(error);
+			}
+		})
+
 		var wrap = $('<div id="wrap"></div>').css({
-			position: 'absolute',
+			position: 'fixed',
 			width: '100%',
 			top: '0',
 			bottom: '0',
@@ -86,7 +157,7 @@ $(function() {
 			zIndex: '1000'
 		});
 		var hello = $('<h1 id="hello">Hello &nbsp;Quiz</h1>').css({
-			position: 'absolute',
+			position: 'fixed',
 			color: '#fff',
 			width: '100%',
 			textAlign: 'center',
@@ -99,12 +170,52 @@ $(function() {
 		$('body').append(hello);
 		wrap.animate({opacity: '1'}, 2000);
 		hello.animate({opacity: '1'}, 2000, function() {
+
 			setTimeout(function() {
-				window.open('quziPart/index.html', '_self');
+				window.open('quziPart/quziDemo.html', '_self');
 			}, 2000);
 		});
 
-	})
+	}
+
+
+
+
+
+
+
+
+
+	$('#loginBtn').on('click', function() {
+		$('.login-box').fadeIn(600);
+	});
+	$('#signBtn').on('click', function() {
+		$('.signup-box').fadeIn(600);
+	});
+	$('.btn-close-login').on('click', function() {
+		$('.login-box').slideUp(600);
+	});
+	$('.btn-close-signup').on('click', function() {
+		$('.signup-box').slideUp(600);
+	});
+
+	$('#signlink').on('click', function() {
+		$('.login-box').fadeOut(1000);
+		$('.signup-box').fadeIn(1000);
+	});
+	//console.log($('.carousel-inner button').length)
+
+	$('#userLogin').on('click', function() {
+		//console.log('a');
+		$('.login-btn-group').fadeOut(600);
+		$('.login-box').fadeOut(600, function() {
+			$('.user-info').fadeIn(600);
+		});
+	});
+
+
+    $('[data-toggle="tooltip"]').tooltip();
+    
 });
 
 

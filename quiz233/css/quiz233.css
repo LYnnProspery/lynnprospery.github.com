@@ -3,102 +3,143 @@
 *By lynnprosper
 */
 * {
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 }
+
 body, html, #topImgBox {
 	height: 100%;
 	width: 100%;
 }
+
 body {
-	font-family: consolas, arial;
+	font-family: consolas;
 }
+
 #navContent li {
-	margin-left: 20px;;
+	margin-left: 20px;
+	margin-top: 5px;
 	cursor: pointer;
 	width: 120px;
 }
 
-
-
 #navContent {
 	font-size: 25px;
 }
-.navbar-brand {
-	font-size: 40px;
+#navContent ul a{
+	color:#fff;
+	transition: all .4s ease;
+}
+#navContent ul a:hover{
+	text-shadow: 3px 3px 5px #ccc;
+}
+.navbar-brand img{
+	margin-top: -10px;
 }
 .navbar {
-	background: rgba(225,225,225,0.8);	
+	background: rgba(0,0,0,0.6);	
 	border:none;
 	border-radius: 0px;
 	width: 100%;
 	position: absolute;
 	top: 0px;
-	z-index: 2;		
+	z-index: 1;		
 }
+
 .carousel .item {
 	height: 100%;
 }
+
 .carousel {
 	height: 100%;
+	z-index: 0;
 }
+
 .carousel a {
 	height: 100%;
 }
+
 #topBox {
 	width:100%; 
 	height:100%;
 	overflow:hidden;
 }
+
 .carousel-caption {
 	margin-bottom: 350px;
 
 }
 .carousel-caption h1,h2{
 	zoom: 1.2;
+	-moz-transform:scale(1.2);
 	text-shadow:2px 2px 3px black;
 }
-.carousel-inner .btn{
+.carousel-inner .btn {
 	position: absolute;
 	width: 200px;
 	top: 300px;
 	left: 50%;
 	height: 50px;
 	margin-left: -100px;
-	background: rgba(0, 0, 0,0.4);
-	border:solid #ccc;
+	background: rgba(255,50,3,0.67);
+	border: none;
+	border-radius: 0;
 	color: white;
 	transition:all 0.2s ease-in-out 0s;
+	font-size: 19px;
+	font-weight: bold; 
+}
+#quizContents .btn {
+	width: 350px;
+	height: 50px;
+	margin-top: 100px;
+	background: rgba(255,50,3,0.67);
+	border: none;
+	border-radius: 0;
+	color: white;
+	transition:all 0.2s ease-in-out 0s;
+	font-size: 19px;
+	font-weight: bold; 
+
+}
+#quizContents .btn:hover {
+	width: 356px;
+	height: 56px;
+	box-shadow: 5px 5px 8px #ccc;
+	margin-top: 97px;
+	margin-left: -3px;
 }
 .carousel-inner .btn:hover {
 	width: 206px;
 	height: 56px;
 	margin-left: -103px;
 	top: 295px;
-	background: rgba(56, 143, 52,0.6);
 	box-shadow: 5px 5px 8px #ccc;
 }
 .topBtn {
-	width: 100px;
-	height: 40px;
+	font-size: 20px;
 	margin-left: 10px;
-	margin-top: 5px;
+	margin-top: 10px;
 	transition:all 0.2s ease-in-out 0s;
 }
+
 .topBtn:hover {
-	margin-top: 0px;
+	margin-top: 5px;
 	box-shadow: 3px 3px 5px #ccc;
 }
+
 .quizItem {				
 	position: absolute;
 	bottom: 0px;
 	width: 100%;
 	text-align:center;				
 }
+
 .quizItem img{
 	cursor: pointer;
 	margin-left: 20px;
 	vertical-align: bottom;
+
 }
 #pic1 {
 	position: fixed;
@@ -112,52 +153,222 @@ body {
 	z-index: -1;
 	display: none;
 }
-.slogan1, .slogan2, .slogan3, .slogan4, .slogan5, .slogan6 {
-	width: 100%;
-	height: 500px;
-	text-align: center;
+
+.slogan:nth-child(2n) {
+	background: rgba(137,137,137,0.8);
 }
-.quizContent1, .quizContent2, .quizContent3, .quizContent4, .quizContent5, .quizContent6{
+
+
+
+.slogan1, .slogan2, .slogan3, .slogan4, .slogan5, .slogan6 {
+	height: 500px;
+	width: 100%;
+	text-align: center;
+	padding-left: 200px;
+	padding-right: 200px;
+}
+/*.quizContent1, .quizContent2, .quizContent3, .quizContent4, .quizContent5, .quizContent6{
 	text-align: center;	
 	width: 100%;
-	height: 500px;
-	background: rgb(240, 240, 240);
+	height:0;
+	background: #000;
 
-}
+}*/
 .footer {
 	width: 100%;
 	height: 200px;
-	background: #ccc;
+	background: #000;
+	color: #fff;
 }
-
+#quizContents {
+	color: #fff;
+}
 #quizContents h1{
 	zoom:1.5;
+	-moz-transform:scale(1.5);
 	text-shadow:2px 2px 3px black;
 	color: white;
 }
+
 .carousel-indicators {
-	margin-bottom: 150px;
+	margin-bottom: 120px;
+	z-index: 0;
 }
+
 .stepAImg, .stepBImg {
 	border:solid;
 	border-radius:20px ;
 	width:236px;
 	overflow: hidden;
 }
+
 #stepA, #stepB, #stepC {
 	display: none;
 }
+
 #finalStep {
 	display: none;
 }
+
 .stepCImg {
 	border: solid;
 	border-radius: 30px;
 	width: 406px;
 	overflow: hidden;
 }
+
 #my p {
 	zoom: 1.5;
+	-moz-transform:scale(1.5);
+}
+#signBtn {
+	width: 85px;
+	height: 35px;
+	background: rgba(237,237,237,0.67);
+	border: none;
+	border-radius: 0px;
+}
+#loginBtn {
+	width: 85px;
+	height: 36px;
+	background: rgba(255,50,3,0.67);
+	border: none;
+	border-radius: 0px;
 }
 
+.login-box, .signup-box {
+	position: absolute;
+	top: 100px;
+	left: 50%;
+	margin-left: -300px;
+	width: 600px;
+	border-radius: 5px;
+	display: none;
+	box-shadow: 2px 2px 5px #fff;
+}
+.login-box label, .signup-box label {
+	color: rgb(183, 181, 179);
+	display: inline-block;
+	font-size: 17px;
+	margin: 15px;
+	margin-left: 40px;
+	font-family: arial;
+}
+.box form .glyphicon {
+	zoom:1.5;
+	-moz-transform:scale(1.5);
+	position: absolute;
+	width:15px;
+	top: 50%;
+	left: 10%;
+	margin-top: -7.5px;
+	color: rgb(74,74,70);
+}
+.input-box {
+	position: relative;
+}
+.login-box input, .signup-box input {
+	background: rgb(29,30,25);
+	color: rgb(183, 181, 179);
+	height: 40px;
+	width: 87%;
+	border-radius:5px;
+	border: none;
+	box-shadow: -3px 3px 3px #000 inset;
+	margin-left: 40px;
+	padding-left: 45px;
+	transition: all .2s ease;
+	
+}
+.box-top h3 {
+	color: rgb(183, 181, 179);
+	line-height: 50px;
+	margin: 0;
+}
+.box-top {
+	background: rgb(29,30,25);
+	height: 50px;
+	border-radius: 5px 5px 0 0;
+	text-align: center;
+}
+.box {
+	background: rgb(44,44,40);
+	height: 400px;
+	border-radius: 0 0 5px 5px;
+}
+#signlink p {
+	color: rgb(183, 181, 179);
+	transition: all .4s ease;
 
+}
+#signlink {
+	display: block;
+	margin-top: 20px;
+	margin-left: 445px;
+	cursor: pointer;
+}
+#signlink:hover p{
+	color: #fff;
+	text-shadow: 2px 2px 5px #ccc;
+}
+.btn-login {
+	width: 400px;
+	height: 40px;
+	border-radius:10px;
+	background: linear-gradient(rgb(145,180,83), rgb(71,101,27));
+	border: none;
+	border-radius: 5px;
+	margin-left: 100px;
+	margin-top: 50px;
+	color: #ccc;
+	font-family: Monaco;	
+	font-size: 17px;
+	transition: all .4s ease;
+	z-index: 2;
+
+}
+.btn-login:hover {
+	border-radius: 0;
+	box-shadow: 3px 3px 5px #ccc;
+}
+.btn-close-login, .btn-close-signup {
+	position: absolute;
+	top: 15px;
+	right: 20px;
+	cursor: pointer;
+	transition: all .4s ease;
+}
+.btn-close-login:hover, .btn-close-signup:hover {
+	color: #fff;
+	text-shadow: 2px 2px 5px #ccc;
+}
+.btn-signup {
+	background: linear-gradient(rgb(43,144,128), rgb(13,111,97));
+}
+.user-info {
+	height: 55px;
+	width: 200px;
+	line-height: 55px;
+	margin-right: 50px;
+	display: none;
+
+}
+.user-info a {
+	color: white;
+	font-size: 16px;
+	cursor: pointer;
+}
+.docker img {
+	cursor: pointer;
+}
+.footer img {
+	margin-top: 20px;
+}
+.footer a {
+	color: #fff;
+	cursor: pointer;
+	text-decoration: none;
+}
+#copyright {
+	margin-top: 30px;
+}
