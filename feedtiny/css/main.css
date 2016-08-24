@@ -9,7 +9,7 @@ html {
 body {
 	/*width: 100%;
 	height: 100%;*/
-	overflow: hidden;
+/*	overflow: hidden;*/
 	background: -webkit-linear-gradient(rgb(11,92,193), rgb(1,4,33));
 	background: -ms-linear-gradient(rgb(11,92,193), rgb(1,4,33));
 	background: -o-linear-gradient(rgb(11,92,193), rgb(1,4,33));
