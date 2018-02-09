@@ -18,6 +18,7 @@ $(function() {
 		var up = function() {
 			date = new Date() + '';
 			$('#main-clock').html(date.substring(0, 25));
+			$('#main-greet').html('See you ' + '<span style="transform: scale(1.5); text-shadow: 5px 5px 5px #000">' + (new Date('2018/2/21').getDate() - (new Date().getDate())) + '</span>' + ' days later');
 		}
 		up();
 		setInterval(up, 1000);
