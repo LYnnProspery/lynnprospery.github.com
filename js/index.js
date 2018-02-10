@@ -1,5 +1,9 @@
 $(function() {
 	//wrap-enter-animation
+	var indexBgSrc = Math.ceil(Math.random() * 8);
+	console.log(indexBgSrc)
+	$('#index-bg').prop('src', 'bg/index_bg' + indexBgSrc + '.jpg');
+
 	$('#enter-wrap').animate({opacity: '1'}, 2000, function() {
 		var _this = $(this);
 		setTimeout(function() {
@@ -18,7 +22,8 @@ $(function() {
 		var up = function() {
 			date = new Date() + '';
 			$('#main-clock').html(date.substring(0, 25));
-			$('#main-greet').html('See you ' + '<span style="transform: scale(1.5); text-shadow: 5px 5px 5px #000">' + (new Date('2018/2/21').getDate() - (new Date().getDate())) + '</span>' + ' days later');
+			$('#main-greet').html('See you ' + '<span style="transform: scale(1.5); text-shadow: 5px 5px 5px #000">'
+			 + (new Date('2018/2/21').getDate() - (new Date().getDate())) + '</span>' + ' days later');
 		}
 		up();
 		setInterval(up, 1000);
