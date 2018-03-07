@@ -22,16 +22,16 @@ $(function() {
 		var up = function() {
 			date = new Date() + '';
 			$('#main-clock').html(date.substring(0, 25));
-			var content = (new Date('2018/2/21').getDate() - (new Date().getDate()));
+			// var content = (new Date('2018/2/21').getTime() - (new Date().Timw()));
 
-			if (content > 0) {
-				$('#main-greet').html('See you ' + '<span style="transform: scale(1.5); text-shadow: 5px 5px 5px #000;">'
-				 + content + '</span>' + ' days later');				 
-			} else 
-			{
-				content = Math.ceil(((new Date().getTime()) - new Date('2017/12/17').getTime()) / (60 * 60 * 24 * 1000));
+			// if (content > 0) {
+			// 	$('#main-greet').html('See you ' + '<span style="transform: scale(1.5); text-shadow: 5px 5px 5px #000;">'
+			// 	 + content + '</span>' + ' days later');				 
+			// } else 
+			// {
+				let content = Math.ceil(((new Date().getTime()) - new Date('2017/12/17').getTime()) / (60 * 60 * 24 * 1000));
 				$('#main-greet').html('We have met '  + content + ' days');					
-			}
+			// }
 		}
 		up();
 		setInterval(up, 1000);
