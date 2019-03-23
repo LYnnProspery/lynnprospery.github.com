@@ -21,7 +21,72 @@
 </html>
 <body class="loading">
     <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle"></h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title"></h1>
+        <div class="stuff">
+            <span>五月 21, 2018</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <p>Mongoose: 关联数据表以及外键填充 Ref &amp; Populate<br>Mongodb是非关系型数据库，不具备Mysql中具有的join操作，但是mongoose提供了方便的关联、填充功能，使开发不必要手动编写关联查询代码逻辑</p>
+<p>There are no joins in MongoDB but sometimes we still want references to documents in other collections. This is where population comes in.</p>
+<p>数据关联（外键引用）<br>Schema的字段中，可以使用ref属性来引用指向另一个Schema</p>
+<p>上官方的Demo</p>
+<p>var mongoose = require(‘mongoose’);<br>var Schema = mongoose.Schema;</p>
+<p>var personSchema = Schema({<br>  _id: Schema.Types.ObjectId,<br>  name: String,<br>  age: Number,<br>  stories: [{ type: Schema.Types.ObjectId, ref: ‘Story’ }]<br>});</p>
+<p>var storySchema = Schema({<br>  author: { type: Schema.Types.ObjectId, ref: ‘Person’ },<br>  title: String,<br>  fans: [{ type: Schema.Types.ObjectId, ref: ‘Person’ }]<br>});</p>
+<p>var Story = mongoose.model(‘Story’, storySchema);<br>var Person = mongoose.model(‘Person’, personSchema);<br>这段代码的storySchema中的author和fans字段都引用了Person类型,<br>而storySchema中也引用了Story类型</p>
+<p>官网有段:</p>
+<p>Note: ObjectId, Number, String, and Buffer are valid for use as refs. However, you should use ObjectId unless you are an advanced user and have a good reason for doing so.</p>
+<p>经过一些验证和尝试，此处的ref类型, 指的不是数据中其他想关联的字段的类型，而是_id的类型。目前populate填充只能作用于_id。所以ref关联的type要与所关联数据类型的_id字段类型相对应。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src>
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title="0" data-url="http://link.hhtjim.com/163/5146554.mp3"></li>
+                    
+                        <li title="1" data-url="http://link.hhtjim.com/qq/001faIUs4M2zna.mp3"></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id="gitalk-container" class="comment link" data-ae="false" data-ci data-cs data-r data-o data-a data-d="false">查看评论</div>
+
+
+    </div>
     
+</div>
+
+
+    </div>
+</div>
 </body>
 <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
 <script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>

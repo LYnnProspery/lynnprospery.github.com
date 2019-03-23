@@ -1,0 +1,219 @@
+
+<!DOCTYPE html>
+<html lang class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hexo</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Lynn,"> 
+    
+    <meta name="author" content="John Doe"> 
+    <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+</head>
+</html>
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">JavaScript Event Loop</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">JavaScript Event Loop</h1>
+        <div class="stuff">
+            <span>十二月 31, 2015</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <h1 id="JavaScript-Event-Loop"><a href="#JavaScript-Event-Loop" class="headerlink" title="JavaScript Event Loop"></a>JavaScript Event Loop</h1><blockquote>
+<p><em>如有转载，请注明出处 作者: lynn 邮箱: <a href="mailto:lynnpropsper@163.com" target="_blank" rel="noopener">lynnpropsper@163.com</a></em></p>
+</blockquote>
+<p>先来看一段代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'1'</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'2'</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">        i == <span class="number">99</span> &amp;&amp; resolve()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'3'</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'4'</span>)</span><br></pre></td></tr></table></figure>
+<p>大多数人对Promise也多少有些了解，所以可能对结果模棱两可:</p>
+<ul>
+<li>2 4 1 3</li>
+<li>2 4 3 1</li>
+</ul>
+<p>如果自己预测的结果不是这两者之一，那您不妨去看看Promise迷你书或者阮一峰老师的ES6入门中的Promise相关内容。</p>
+<p>传送门:</p>
+<ul>
+<li>[Promise迷你书] (<a href="http://liubin.org/promises-book/" target="_blank" rel="noopener">http://liubin.org/promises-book/</a>)</li>
+<li>[阮一峰 ECMAScript 6 入门] (<a href="http://es6.ruanyifeng.com/#docs/promise" target="_blank" rel="noopener">http://es6.ruanyifeng.com/#docs/promise</a>)<a id="more"></a>
+</li>
+</ul>
+<p>##正文</p>
+<blockquote>
+<p>JavaScript是一门单线程语言，所有版本的javascript”多线程”都是模拟出来的</p>
+</blockquote>
+<p>在Javascript的执行机制中，任务的执行是通过循环读取任务栈中的任务来同步执行的。但是任务中有很多耗时的任务，容易造成”卡顿”，也就是浏览器的阻塞、”假死”。</p>
+<p>考虑到这种问题，任务又被设计分为同步任务和异步任务。</p>
+<p>先来说说Javascript执行的基本流程:</p>
+<ol>
+<li>执行代码</li>
+<li>判断是同步任务还是异步任务<ul>
+<li>同步任务则加入到主线程中依次按代码出现顺序执行</li>
+<li>异步任务则将事件添加到事件栈（以下统称为Event Stack）中并注册回调函数，当指定任务完成后将回调函数添加到事件队列（以下统称为Event Queue）中</li>
+</ul>
+</li>
+<li>当主线程的任务执行完毕时，JS底层会去Event Queue中读取方法添加到主线程执行</li>
+<li>1~3步不断循环执行直至全部代码结束，这也就是传说中的Javascript事件循环机制(Event Loop)</li>
+</ol>
+<p>这里不讨论<code>主线程调用栈</code>与 <code>Event Stack</code>间的执行关系，有兴趣的同学可以自行学习</p>
+<p>举个栗子</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">'request begin'</span>)</span><br><span class="line"></span><br><span class="line">Axios(&#123;</span><br><span class="line">	url: <span class="string">'www.sogo.com'</span>,</span><br><span class="line">	params : &#123;</span><br><span class="line">		myName: <span class="string">'superhero-lynn'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;)</span><br><span class="line">.then(res = &gt; &#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'get my response'</span>)</span><br><span class="line">&#125;)</span><br><span class="line">.catch(<span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'Ouch'</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'Doo-doo-doo, doo-doo-doo'</span>)</span><br></pre></td></tr></table></figure>
+<p>这里用了一个基于Poromise的异步请求的栗子：</p>
+<ol>
+<li>输出request begin</li>
+<li>Axios代码进入Event Stack，注册resolve、reject代码</li>
+<li>输出Doo-doo-doo, doo-doo-doo</li>
+<li>等请求收到响应之后，主线程从Event Queue中读取注册的resolve或者reject方法添加到主线程事件栈中并执行，输出get my response 或者 在请求出错时输出Ouch</li>
+</ol>
+<h2 id="Promise-与-setTimeout"><a href="#Promise-与-setTimeout" class="headerlink" title="Promise 与 setTimeout"></a>Promise 与 setTimeout</h2><p>Promise 和 setTimeout虽然都是异步执行的方法，但是两者有着微妙的差别:</p>
+<ul>
+<li>Promise属于Micro-Task(宏观任务)</li>
+<li>setTimeout属于Macro-Task（微观任务）</li>
+</ul>
+<p>总结下两个阵营:</p>
+<ul>
+<li>Micro-Task<ul>
+<li>Promise</li>
+<li>process.nextTick(callback) 此方法是Nodejs中方法，将回调函数添加到Event Stack中执行</li>
+</ul>
+</li>
+<li>Macro-Task<ul>
+<li>setTimeout</li>
+<li>setInterval</li>
+</ul>
+</li>
+</ul>
+<p>两者在Event Loop中，两者在不断的执行:</p>
+<ol>
+<li>执行主线程事件栈中的Macro-Task</li>
+<li>判断是否有Micro-Task存在，如果存在则执行所有Micro-Task</li>
+<li>执行新的Macro-Task</li>
+</ol>
+<p><strong><em>所以，可以理解为，Promise 中的回调函数，会在一轮的事件循环的尾部执行；而setTimeout中的回调函数，则是在新一轮的时间循环的顶部执行。</em></strong></p>
+<h2 id="又一个栗子"><a href="#又一个栗子" class="headerlink" title="又一个栗子"></a>又一个栗子</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">'1'</span>);</span><br><span class="line"></span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'2'</span>);</span><br><span class="line">    process.nextTick(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'3'</span>);</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'4'</span>);</span><br><span class="line">        resolve();</span><br><span class="line">    &#125;).then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'5'</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br><span class="line">process.nextTick(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'6'</span>);</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'7'</span>);</span><br><span class="line">    resolve();</span><br><span class="line">&#125;).then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'8'</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'9'</span>);</span><br><span class="line">    process.nextTick(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'10'</span>);</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'11'</span>);</span><br><span class="line">        resolve();</span><br><span class="line">    &#125;).then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'12'</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>通过上面的内容，大家如果理解两者的机制，则不难写出答案:</p>
+<p>1，7，6，8，2，4，3，5，9，11，10，12</p>
+<p>整段代码，共进行了三次事件循环</p>
+<p>(请注意，node环境下的事件监听依赖libuv与前端环境不完全相同，输出顺序可能会有误差)</p>
+<p>本文的最后一个栗子借鉴于</p>
+<blockquote>
+<p>掘进社区<br>ssssyoki</p>
+<p>链接：<a href="https://juejin.im/post/59e85eebf265da430d571f89" target="_blank" rel="noopener">https://juejin.im/post/59e85eebf265da430d571f89</a></p>
+</blockquote>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src>
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title="0" data-url="http://link.hhtjim.com/163/5146554.mp3"></li>
+                    
+                        <li title="1" data-url="http://link.hhtjim.com/qq/001faIUs4M2zna.mp3"></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id="gitalk-container" class="comment link" data-ae="false" data-ci data-cs data-r data-o data-a data-d="false">查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
