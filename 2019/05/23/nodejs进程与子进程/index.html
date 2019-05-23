@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html lang class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hexo</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Lynn,"> 
+    <meta name="description" content="node.js进程与子进程众所周知Node基于V8，而在V8中JavaScript是单线程运行的，这里的单线程不是指Node启动的时候就只有一个线程，而是说运行JavaScript代码是在单线程上，,"> 
+    <meta name="author" content="John Doe"> 
+    <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+</head>
+</html>
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">nodejs进程与子进程</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">nodejs进程与子进程</h1>
+        <div class="stuff">
+            <span>五月 23, 2019</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <h1 id="node-js进程与子进程"><a href="#node-js进程与子进程" class="headerlink" title="node.js进程与子进程"></a>node.js进程与子进程</h1><p>众所周知Node基于V8，而在V8中JavaScript是单线程运行的，这里的单线程不是指Node启动的时候就只有一个线程，而是说运行JavaScript代码是在单线程上，Node还有其他线程，比如进行异步IO操作的IO线程。这种单线程模型带来的好处就是系统调度过程中不会频繁进行上下文切换，提升了单核CPU的利用率。<br>但是这种做法有个缺陷，就是我们无法利用服务器CPU多核的性能，一个Node进程只能利用一个CPU。而且单线程模式下一旦代码崩溃就是整个程序崩溃。通常解决方案就是使用Node的cluster模块，通过master-worker模式启用多个进程实例。下面我们详细讲述下，Node如何使用多进程模型利用多核CPU，以及自带的cluster模块具体的工作原理。</p>
+<h1 id="如何创建异步子进程"><a href="#如何创建异步子进程" class="headerlink" title="如何创建异步子进程"></a>如何创建异步子进程</h1><hr>
+<p>childProcess 的实例不是直接创建的，<br>而是使用 <code>child_process.spawn()</code>、<code>child_process.exec()</code>、<code>child_process.execFile()</code> 或 <code>child_process.fork()</code> 方法来创建 ChildProcess的实例。</p>
+<ul>
+<li><p>spawn(command&lt;, args&gt;&lt;, options&gt;)</p>
+</li>
+<li><p>exec(command&lt;, options&gt;&lt;, callback&gt;)</p>
+</li>
+<li><p>execFile(file&lt;, args&gt;&lt;, options&gt;&lt;, callback&gt;)</p>
+</li>
+<li><p>fork(modulePath&lt;, args&gt;&lt;, options&gt;)</p>
+</li>
+</ul>
+<h2 id="spawn"><a href="#spawn" class="headerlink" title="spawn"></a>spawn</h2><hr>
+<slide class="bg-light">
+
+<note><br>参数很多，可以打开官网看下<br></note>
+
+<p>举个🌰</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; spawn &#125; = <span class="built_in">require</span>(<span class="string">'child_process'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> child = spawn(<span class="string">'ls'</span>, [<span class="string">'-l'</span>]);</span><br><span class="line"><span class="comment">// const child = spawn('ls -l', &#123;</span></span><br><span class="line"><span class="comment">// 	shell: true,</span></span><br><span class="line"><span class="comment">// &#125;);</span></span><br><span class="line"></span><br><span class="line">child.on(<span class="string">'close'</span>, (code) =&gt; &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`子进程退出码：<span class="subst">$&#123;code&#125;</span>`</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">child.stdout.on(<span class="string">'data'</span>, (data) =&gt; &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`stdout: <span class="subst">$&#123;data&#125;</span>`</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">child.stderr.on(<span class="string">'data'</span>, (data) =&gt; &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`stderr: <span class="subst">$&#123;data&#125;</span>`</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>通过spawn创建的子进程，继承自<code>EventEmitter</code>，所以可以在上面进行事件（<code>error</code>，<code>close</code>等）的监听。同时子进程具有三个输入输出流：stdin、stdout、stderr，通过这三个流，可以实时获取子进程的输入输出和错误信息。</p>
+<slide class="aligncenter">
+
+<h1 id="exec-execFile"><a href="#exec-execFile" class="headerlink" title="exec / execFile"></a>exec / execFile</h1><hr>
+<slide>
+
+<p>execFile最终调用的是spwan方法</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">exports.execFile = <span class="function"><span class="keyword">function</span> <span class="title">execFile</span>(<span class="params">file <span class="regexp">/* , args, options, callback */</span></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> args = &lt;&gt;;</span><br><span class="line">  let callback;</span><br><span class="line">  let options;</span><br><span class="line">  var child = spawn(file, args, &#123;</span><br><span class="line">    // ... some options</span><br><span class="line">  &#125;);</span><br><span class="line">  </span><br><span class="line">  return child;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>exec会将spawn的输入输出流转换成String，默认使用UTF-8的编码，然后传递给回调函数。有点需要注意，这里的buffer是有最大缓存区的，如果超出会直接被kill掉，可用通过maxBuffer属性进行配置（默认200*1024）</p>
+<p><slide><br>又一个🌰</slide></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; exec &#125; = <span class="built_in">require</span>(<span class="string">'child_process'</span>);</span><br><span class="line">exec(<span class="string">'ls -l'</span>, (error, stdout, stderr) =&gt; &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`stdout: <span class="subst">$&#123;stdout&#125;</span>`</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`stderr: <span class="subst">$&#123;stderr&#125;</span>`</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>使用回调方式在node中较为熟悉，比流更容易操作，所以我们能使用exec方法执行一些shell命令，然后在回调中获取返回值</p>
+<slide>
+
+<p>exec最后调用的就是execFile,唯一的区别是，exec中调用的<code>normalizeExecArgs</code>方法会将opts的shell属性默认设置为true</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">exports.exec = <span class="function"><span class="keyword">function</span> <span class="title">exec</span>(<span class="params"><span class="regexp">/* command , options, callback */</span></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> opts = normalizeExecArgs.apply(<span class="literal">null</span>, <span class="built_in">arguments</span>);</span><br><span class="line">  <span class="keyword">return</span> exports.execFile(opts.file, opts.options, opts.callback);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">normalizeExecArgs</span>(<span class="params">command, options, callback</span>) </span>&#123;</span><br><span class="line">  options = &#123; ...options &#125;;</span><br><span class="line">  options.shell = <span class="keyword">typeof</span> options.shell === <span class="string">'string'</span> ? options.shell : <span class="literal">true</span>;</span><br><span class="line">  <span class="keyword">return</span> &#123; options &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>`shell &lt;boolean&gt; | &lt;string&gt; 如果为 true，则在 shell 中运行 command。 在 UNIX 上使用 &apos;/bin/sh&apos;，在 Windows 上使用 process.env.ComSpec。 传入字符串则指定其他 shell。默认值: false（没有 shell）。`
+</code></pre><note><br>    shell是一个命令行解析成机器码的工具<br></note>
+
+
+<p><img src="https://static.yximgs.com/udata/pkg/lyp/shell.jpg" alt></p>
+<slide class="aligncenter">
+
+
+<h1 id="fork"><a href="#fork" class="headerlink" title="fork"></a>fork</h1><hr>
+<slide>
+
+<blockquote>
+<p>child_process.fork() 方法是 child_process.spawn() 的一个特例，专门用于衍生新的 Node.js 进程。 与 child_process.spawn() 一样返回 ChildProcess 对象。 返回的 ChildProcess 会内置一个额外的通信通道，允许消息在父进程和子进程之间来回传递</p>
+</blockquote>
+<p>在js层使用</p>
+<ul>
+<li><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">process.send(message)</span><br></pre></td></tr></table></figure>
+</li>
+<li><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">process.on(<span class="string">'message'</span>, msg =&gt; &#123;&#125;)<span class="string">`</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><slide><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">exports.fork = <span class="function"><span class="keyword">function</span> <span class="title">fork</span>(<span class="params">modulePath <span class="regexp">/* , args, options */</span></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  </span><br><span class="line">  options.shell = <span class="literal">false</span>;</span><br><span class="line">    </span><br><span class="line">  <span class="keyword">return</span> spawn(options.execPath, args, options);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></slide></p>
+<ul>
+<li>execPath： 用来创建子进程的可执行文件，默认是/usr/local/bin/node。也就是说，你可通过execPath来指定具体的node可执行文件路径。（比如多个node版本）</li>
+<li>shell属性为false<br><slide><br>㕛一个🌰</slide></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// parent</span></span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</span><br><span class="line"><span class="keyword">const</span> &#123; fork &#125; = <span class="built_in">require</span>(<span class="string">'child_process'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> childProcessInstance = fork(path.resolve(__dirname, <span class="string">'fork-child.js'</span>));</span><br><span class="line"></span><br><span class="line">childProcessInstance.on(<span class="string">'message'</span>, (&#123; role, msg &#125;) =&gt; &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`[<span class="subst">$&#123;role&#125;</span>]: <span class="subst">$&#123;msg&#125;</span>`</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">childProcessInstance.send(&#123;</span><br><span class="line">	role: <span class="string">'father'</span>,</span><br><span class="line">	msg: <span class="string">'get up my son'</span>,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// son</span></span><br><span class="line">process.on(<span class="string">'message'</span>, (&#123; role, msg &#125;) =&gt; &#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">`[<span class="subst">$&#123;role&#125;</span>]: <span class="subst">$&#123;msg&#125;</span>`</span>);</span><br><span class="line">	handleGetUp();</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> handleGetUp = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">	process.send(&#123;</span><br><span class="line">		role: <span class="string">'son'</span>,</span><br><span class="line">		msg: <span class="string">'ok i\'am coming'</span></span><br><span class="line">	&#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><slide><br>叒一个🌰</slide></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// parent</span></span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</span><br><span class="line"><span class="keyword">const</span> &#123; fork &#125; = <span class="built_in">require</span>(<span class="string">'child_process'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'parent execArgv: '</span> + process.execArgv);</span><br><span class="line"></span><br><span class="line">fork(path.resolve(__dirname, <span class="string">'fork-child-exec-argv.js'</span>), &#123;</span><br><span class="line">    execArgv: process.execArgv</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// son</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'child execArgv: '</span> + process.execArgv);</span><br></pre></td></tr></table></figure>
+<p>设置execArgv的目的一般在于，让子进程跟父进程保持相同的执行环境。</p>
+<p>比如，父进程指定了<code>--harmony</code>，如果子进程没有指定，那么就要跪了。</p>
+<slide class="aligncenter">
+
+<h1 id="用fork实现master-worker模型"><a href="#用fork实现master-worker模型" class="headerlink" title="用fork实现master-worker模型"></a>用fork实现<code>master-worker</code>模型</h1><hr>
+<p><slide><br>叕一个🌰</slide></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// master</span></span><br><span class="line"><span class="keyword">const</span> &#123; fork &#125; = <span class="built_in">require</span>(<span class="string">'child_process'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">    fork(<span class="string">'./fork-server-worker.js'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// worker</span></span><br><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"></span><br><span class="line">http.createServer(<span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">	res.end(<span class="string">'hello world'</span>);</span><br><span class="line">&#125;).listen(<span class="number">3000</span>, () =&gt; &#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'listen on 3000'</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>能不能用master监听，然后分发给不同的worker服务</p>
+<p><slide><br>叕又一个🌰</slide></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// master</span></span><br><span class="line"><span class="keyword">const</span> &#123; fork &#125; = <span class="built_in">require</span>(<span class="string">'child_process'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> server = <span class="built_in">require</span>(<span class="string">'net'</span>).createServer();</span><br><span class="line">server.on(<span class="string">'connection'</span>, () =&gt; &#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'handle by master'</span>);</span><br><span class="line">&#125;);</span><br><span class="line">server.listen(<span class="number">3000</span>, () =&gt; &#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'master listen on 3000'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">	<span class="keyword">const</span> worker = fork(<span class="string">'./fork-server-worker-accept-handle.js'</span>);</span><br><span class="line">	worker.send(<span class="string">'server'</span>, server);</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'create new worker, pid'</span>, worker.pid);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 关闭</span></span><br><span class="line"><span class="comment">// server.close();</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// worker</span></span><br><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> httpServer = http.createServer(<span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">	res.end(<span class="string">'hello world'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">process.on(<span class="string">'message'</span>, (msg, tcpMaster) =&gt; &#123;</span><br><span class="line">	<span class="keyword">if</span> (msg === <span class="string">'server'</span>) &#123;</span><br><span class="line">		tcpMaster.on(<span class="string">'connection'</span>, (socket) =&gt; &#123;</span><br><span class="line">			<span class="built_in">console</span>.log(<span class="string">'handle by worker pid: '</span>, process.pid);</span><br><span class="line">			httpServer.emit(<span class="string">'connection'</span>, socket);</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>这样还是可能被master抢占到，所以为了只让worker去处理，可以在开启worker后关闭master的监听。</p>
+<p>这样的模式从 master监听 然后分发给worker变成了 worker去监听</p>
+<slide>
+
+<p>由于进程每接收一个连接都会用掉一个文件描述符，因此代理方案中客户端连接到代理进程，代理进程连接到工作进程的过程需要用掉两个文件描述符，操作系统的文件描述符是有限的，代理方式需要一倍数量的文件描述符影响了系统的扩展能力。</p>
+<p>为了解决上述问题，Node 引入了进程间传递handle的功能。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">child.send(message, [sendHandle])</span><br></pre></td></tr></table></figure>
+<p>handle(句柄)是一种可以用来标识资源的引用，比如handle可以标识一个服务器端的 socket 对象，一个客户端的 socket 对象，一个 UDP scoket，一个管道等。</p>
+<p>发送handle意味着主进程接收到 socket 请求后，直接将 socket 发送给工作进程，而不是重新与工作进程之间建立新的 socket 连接来转发数据。</p>
+<slide>
+
+<h2 id="Q：一个请求到了，多个的进程都被唤醒去抢占，导致惊群"><a href="#Q：一个请求到了，多个的进程都被唤醒去抢占，导致惊群" class="headerlink" title="Q：一个请求到了，多个的进程都被唤醒去抢占，导致惊群"></a>Q：一个请求到了，多个的进程都被唤醒去抢占，导致惊群</h2><hr>
+<h2 id="A：用nginx反向代理解决"><a href="#A：用nginx反向代理解决" class="headerlink" title="A：用nginx反向代理解决"></a>A：用nginx反向代理解决</h2><slide class="aligncenter">
+
+<h1 id="Cluster"><a href="#Cluster" class="headerlink" title="Cluster"></a>Cluster</h1><hr>
+<slide>
+
+<p>叕㕛一个🌰</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> cluster = <span class="built_in">require</span>(<span class="string">'cluster'</span>);</span><br><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"><span class="keyword">const</span> numCPUs = <span class="built_in">require</span>(<span class="string">'os'</span>).cpus().length;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (cluster.isMaster) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`主进程 <span class="subst">$&#123;process.pid&#125;</span> 正在运行`</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 衍生工作进程。</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; numCPUs; i++) &#123;</span><br><span class="line">    cluster.fork();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  cluster.on(<span class="string">'exit'</span>, (worker, code, signal) =&gt; &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`工作进程 <span class="subst">$&#123;worker.process.pid&#125;</span> 已退出`</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">// 工作进程可以共享任何 TCP 连接。</span></span><br><span class="line">  <span class="comment">// 在本例子中，共享的是 HTTP 服务器。</span></span><br><span class="line">  http.createServer(<span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">    res.writeHead(<span class="number">200</span>);</span><br><span class="line">    res.end(<span class="string">'你好世界\n'</span>);</span><br><span class="line">  &#125;).listen(<span class="number">8000</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`工作进程 <span class="subst">$&#123;process.pid&#125;</span> 已启动`</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用cluster实现简单Node的单机集群</p>
+<p>工作进程由child_process.fork()方法创建，因此它们可以使用IPC和父进程通信，从而使各进程交替处理连接服务。</p>
+<slide>
+
+<p>工作进程的分发</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RoundRobinHandle</span></span><br><span class="line"><span class="keyword">this</span>.handle.onconnection = <span class="function">(<span class="params">err, handle</span>) =&gt;</span> <span class="keyword">this</span>.distribute(err, handle);</span><br><span class="line"></span><br><span class="line"><span class="comment">// distribute 对工作进程进行分发</span></span><br><span class="line">RoundRobinHandle.prototype.distribute = <span class="function"><span class="keyword">function</span>(<span class="params">err, handle</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.handles.push(handle); <span class="comment">// 存入TCP服务的句柄</span></span><br><span class="line">  <span class="keyword">const</span> worker = <span class="keyword">this</span>.free.shift(); <span class="comment">// 取出第一个工作进程</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (worker)</span><br><span class="line">    <span class="keyword">this</span>.handoff(worker); <span class="comment">// 切换到工作进程</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">RoundRobinHandle.prototype.handoff = <span class="function"><span class="keyword">function</span>(<span class="params">worker</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> handle = <span class="keyword">this</span>.handles.shift(); <span class="comment">// 获取TCP服务句柄</span></span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (handle === <span class="literal">undefined</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>.free.push(worker);  <span class="comment">// 将该工作进程重新放入队列中</span></span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">const</span> message = &#123; <span class="attr">act</span>: <span class="string">'newconn'</span>, <span class="attr">key</span>: <span class="keyword">this</span>.key &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 向工作进程发送一个类型为 newconn 的消息以及TCP服务的句柄</span></span><br><span class="line">  sendHelper(worker.process, message, handle, (reply) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (reply.accepted)</span><br><span class="line">      handle.close();</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      <span class="keyword">this</span>.distribute(<span class="number">0</span>, handle);  <span class="comment">// 工作进程不能正常运行，启动下一个</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.handoff(worker);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<note><br>原理就是一个tcp监听，Ipc传递handle<br>维护一个worler队列，<br>类似轮询的 调用工作进程，如果进程挂了，就换下一个<br>所以这样也不会导致惊群<br>添加从最后加，使用拿第一个，负载均衡策略？<br></note>
+
+<slide class="aligncenter">
+
+<h1 id="Thanks"><a href="#Thanks" class="headerlink" title="Thanks"></a>Thanks</h1><hr>
+<slide>
+
+
+</slide></slide></slide></slide></slide></slide></slide></slide></slide></slide></slide></slide></slide></slide>
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src>
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title="0" data-url="http://m10.music.126.net/20190323110127/645a0f308be8e7d3c6a53e0f2444bad2/ymusic/075c/c6d4/a32e/07b67175092cd3469767af51ff7cdceb.mp3"></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id="gitalk-container" class="comment link" data-ae="false" data-ci data-cs data-r data-o data-a data-d="false">查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
